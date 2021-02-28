@@ -1,0 +1,37 @@
+app-id: org.pymol.PyMOL
+runtime: org.kde.Platform
+runtime-version: '5.15'
+sdk: org.kde.Sdk
+command: pymol
+separate-locales: false
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --filesystem=host
+  - --socket=session-bus
+  - --device=all
+  - --env=PATH=/app/bin
+  - --env=PYTHONPATH=/app/packages/python
+
+modules:
+  - shared-modules/glew/glew.json
+  - sip.yaml
+  - pyqt5.yaml
+  - python3-numpy.yaml
+  - glm.yaml
+  - mmtf-cpp.yaml
+  - msgpack.yaml
+  - hdf5.yaml
+  - netcdf.yaml
+
+  - name: pymol
+    buildsystem: simple
+    build-commands:
+      - export 'CXXFLAGS=-O2 -Wall -D_FORTIFY_SOURCE=2 -fstack-protector-strong -funwind-tables -fasynchronous-unwind-tables -fstack-clash-protection -Werror=return-type -flto=auto -fno-strict-aliasing'
+      - CXXFLAGS='-O2 -Wall -D_FORTIFY_SOURCE=2 -fstack-protector-strong -funwind-tables -fasynchronous-unwind-tables -fstack-clash-protection -Werror=return-type -flto=auto -fno-strict-aliasing'
+      - python setup.py install --prefix=${FLATPAK_DEST}
+    sources:
+      - type: archive
+        url: https://github.com/schrodinger/pymol-open-source/archive/v2.4.0.tar.gz
+        sha256: 5ede4ce2e8f53713c5ee64f5905b2d29bf01e4391da7e536ce8909d6b9116581
+
