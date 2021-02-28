@@ -23,7 +23,9 @@ modules:
   - msgpack.yaml
   - hdf5.yaml
   - netcdf.yaml
-
+  - libpng.yaml
+  - libxml2.yaml
+  
   - name: pymol
     buildsystem: simple
     build-commands:
