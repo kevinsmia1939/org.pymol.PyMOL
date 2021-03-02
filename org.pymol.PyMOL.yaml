@@ -17,6 +17,7 @@ modules:
   - shared-modules/glew/glew.json
   - sip.yaml
   - pyqt5.yaml
+  - pyside2.yaml
   - python3-numpy.yaml
   - glm.yaml
   - mmtf-cpp.yaml
