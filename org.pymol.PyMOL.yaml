@@ -32,5 +32,6 @@ modules:
     sources:
       - type: git
         url: https://github.com/schrodinger/pymol-open-source
+        commit: e0f39aa6d4e4d4110a914950606861dc4faf2eb7
         
 
