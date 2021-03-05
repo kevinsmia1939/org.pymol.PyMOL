@@ -15,16 +15,109 @@ finish-args:
 
 modules:
   - shared-modules/glew/glew.json
-  - pyside2.yaml
-  - python3-numpy.yaml
-  - glm.yaml
-  - mmtf-cpp.yaml
-  - msgpack.yaml
-  - hdf5.yaml
-  - netcdf.yaml
-  - libpng.yaml
-  - libxml2.yaml
-  
+
+  - name: msgpack
+    buildsystem: cmake
+    config-opts:
+      - -DCMAKE_INSTALL_PREFIX=/app
+      - -DBUILD_SHARED_LIBS=ON
+      - -DMSGPACK_ENABLE_STATIC=OFF
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DMSGPACK_BUILD_EXAMPLES=OFF
+      - -DMSGPACK_CXX11=ON
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+      - '*.a'  
+    sources:
+      - type: archive
+        url: https://github.com/msgpack/msgpack-c/releases/download/cpp-3.3.0/msgpack-3.3.0.tar.gz
+        sha256: 6e114d12a5ddb8cb11f669f83f32246e484a8addd0ce93f274996f1941c1f07b 
+
+  - name: hdf5
+    cleanup: 
+      - /share/hdf5_examples
+    sources:
+      - type: archive
+        url: https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz
+        sha256: a62dcb276658cb78e6795dd29bf926ed7a9bc4edf6e77025cd2c689a8f97c17a
+
+  - name: pyside2
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TESTS=OFF
+    cleanup:
+      - /bin
+    sources:
+      - type: archive
+        url: https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-5.15.2-src/pyside-setup-opensource-src-5.15.2.tar.xz
+        sha256: b306504b0b8037079a8eab772ee774b9e877a2d84bab2dbefbe4fa6f83941418
+      - type: shell
+        commands:
+            - mkdir -p /app/include/qt5tmp && cp -R /usr/include/Qt* /app/include/qt5tmp # https://bugreports.qt.io/browse/PYSIDE-787
+            - sed -i 's|\(--include-paths=\)|\1/app/include/qt5tmp:|' sources/pyside2/cmake/Macros/PySideModules.cmake
+          
+  - name: libxml2
+    config-opts:
+        - --disable-documentation
+        - --without-python
+    cleanup:
+      - '*.la'  
+      - '*.a'  
+    sources:
+      - type: archive
+        url: ftp://xmlsoft.org/libxml2/libxml2-2.9.9.tar.gz
+        sha256: 94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871
+         
+  - name: libpng
+    config-opts: 
+      - --disable-static
+    cleanup: 
+      - /bin
+      - /include
+      - /lib/pkgconfig
+      - /share
+    sources: 
+      - type: archive
+        url: https://sourceforge.net/projects/libpng/files/libpng16/1.6.37/libpng-1.6.37.tar.xz
+        sha256: 505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca 
+        
+  - name: glm
+    buildsystem: simple
+    build-commands:
+      - cp -r glm /app/include
+    sources:
+      - type: git
+        url: https://github.com/g-truc/glm
+        tag: 0.9.9.8
+        commit: bf71a834948186f4097caa076cd2663c69a10e1e
+
+  - name: python3-numpy
+    buildsystem: simple
+    build-commands:
+      - rm pyproject.toml
+      - pip3 install --prefix=/app .
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/51/60/3f0fe5b7675a461d96b9d6729beecd3532565743278a9c3fe6dd09697fa7/numpy-1.19.5.zip
+        sha256: a76f502430dd98d7546e1ea2250a7360c065a5fdea52b2dffe8ae7180909b6f4
+    
+  - name: mmtf-cpp
+    buildsystem: cmake
+    sources:
+      - type: archive
+        url: https://github.com/rcsb/mmtf-cpp/archive/v1.0.0.tar.gz
+        sha256: 881f69c4bb56605fa63fd5ca50842facc4947f686cbf678ad04930674d714f40
+
+  - name: netcdf
+    sources:
+      - type: archive
+        url: https://github.com/Unidata/netcdf-c/archive/v4.7.4.tar.gz
+        sha256: 99930ad7b3c4c1a8e8831fb061cb02b2170fc8e5ccaeda733bd99c3b9d31666b 
+        
   - name: pymol
     buildsystem: simple
     build-commands:
@@ -32,6 +125,11 @@ modules:
     sources:
       - type: git
         url: https://github.com/schrodinger/pymol-open-source
-        commit: e0f39aa6d4e4d4110a914950606861dc4faf2eb7
-        
+        tag: v2.4.0
+        sha256: d9faf3eaa72fb4977d49a83ded84d41a7153b6dd
+      - type: patch
+        strip-components: 1
+        options: -l
+        paths: 
+          - fix-crash-loading-structure.patch # Fix github.com/schrodinger/pymol-open-source/issues/119
 

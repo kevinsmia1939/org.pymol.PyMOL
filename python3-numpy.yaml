@@ -1,9 +1,0 @@
-name: python3-numpy
-buildsystem: simple
-build-commands:
-  - rm pyproject.toml
-  - pip3 install --prefix=/app .
-sources:
-  - type: archive
-    url: https://files.pythonhosted.org/packages/51/60/3f0fe5b7675a461d96b9d6729beecd3532565743278a9c3fe6dd09697fa7/numpy-1.19.5.zip
-    sha256: a76f502430dd98d7546e1ea2250a7360c065a5fdea52b2dffe8ae7180909b6f4

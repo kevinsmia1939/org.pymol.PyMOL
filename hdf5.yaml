@@ -1,7 +1,0 @@
-name: hdf5
-cleanup: /share/hdf5_examples
-sources:
-  - type: archive
-    url: https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.0/src/hdf5-1.12.0.tar.gz
-    sha256: a62dcb276658cb78e6795dd29bf926ed7a9bc4edf6e77025cd2c689a8f97c17a
-cleanup: /share/hdf5_examples
